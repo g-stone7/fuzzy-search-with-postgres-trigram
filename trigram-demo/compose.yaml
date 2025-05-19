@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: 'postgres:17-alpine'
+    command: [ "postgres", "-c", "log_statement=all" ]
+    environment:
+      - POSTGRES_DB=trigram-demo
+      - POSTGRES_USER=trigram-user
+      - POSTGRES_PASSWORD=trigram-pass
+    ports:
+      - '5432:5432'
+    volumes:
+      - ~/db-mounts/trigram-demo:/var/lib/postgresql/data
