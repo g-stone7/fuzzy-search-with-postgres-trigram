@@ -25,12 +25,12 @@ WHERE address_street ILIKE '%stitu%';
 
 SELECT *
 FROM customer
-WHERE 'constit' <% address_street;
+WHERE 'stitu' <% address_street;
 
 SELECT DISTINCT address_street,
-                word_similarity('constitution', address_street) AS similarity_score
+                word_similarity('constitucion', address_street) as score
 FROM customer
-ORDER BY similarity_score DESC;
+ORDER BY score DESC;
 
 SELECT show_trgm('constitucion'), show_trgm('Constitución');
 
