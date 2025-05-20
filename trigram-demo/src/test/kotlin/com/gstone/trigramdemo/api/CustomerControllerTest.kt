@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -35,38 +36,14 @@ constructor(
     @BeforeEach
     fun setUp() {
         customerRepository.deleteAll()
-        customerRepository.save(
-            CustomerEntity(
-                contractNumber = "CN123456",
-                address =
-                    Address(
-                        zipCode = "12345",
-                        city = "Barcelona",
-                        street = "Avenida de la Constitucion",
-                        streetNumber = "12",
-                    ),
-                contactDetails =
-                    ContactDetails(
-                        firstName = "Jennifer",
-                        lastName = "Doe",
-                        email = "jane.doe@example.localhost",
-                        phone = "1234567890")))
+        customerRepository.save(buildCustomerEntity())
     }
 
     @ParameterizedTest
     @ValueSource(strings = ["Barcelna", "avenida", "de la c", "constitucon", "Jenifer"])
     fun `searchCustomers - should find customer when search query has typos`(search: String) {
-        val result =
-            mockMvc
-                .perform(get("/customers").queryParam("q", search))
-                .andExpect(status().isOk)
-                .andReturn()
-        val testSubject =
-            objectMapper.readValue(
-                result.response.contentAsString,
-                object : TypeReference<PagedResult<CustomerDto>>() {})
-
-        assertThat(testSubject.totalElements).isEqualTo(1)
+        val result = hitSearch(get("/customers").queryParam("q", search))
+        assertThat(result.totalElements).isEqualTo(1)
     }
 
     @ParameterizedTest
@@ -74,16 +51,48 @@ constructor(
     fun `searchCustomers - should not find customer when search query is not similar enough`(
         search: String
     ) {
-        val result =
-            mockMvc
-                .perform(get("/customers").queryParam("q", search))
-                .andExpect(status().isOk)
-                .andReturn()
-        val testSubject =
-            objectMapper.readValue(
-                result.response.contentAsString,
-                object : TypeReference<PagedResult<CustomerDto>>() {})
+        val result = hitSearch(get("/customers").queryParam("q", search))
+        assertThat(result.totalElements).isEqualTo(0)
+    }
 
-        assertThat(testSubject.totalElements).isEqualTo(0)
+    @ParameterizedTest
+    @ValueSource(strings = ["Barcelna", "avenida", "de la c", "constitucon", "Jenifer"])
+    fun `searchCustomersWithSpecification - should find customer when search query has typos`(
+        search: String
+    ) {
+        val result = hitSearch(get("/customers/specification").queryParam("q", search))
+        assertThat(result.totalElements).isEqualTo(1)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["Madrid", "John"])
+    fun `searchCustomersWithSpecification - should not find customer when search query is not similar enough`(
+        search: String
+    ) {
+        val result = hitSearch(get("/customers/specification").queryParam("q", search))
+        assertThat(result.totalElements).isEqualTo(0)
+    }
+
+    private fun buildCustomerEntity(): CustomerEntity =
+        CustomerEntity(
+            contractNumber = "CN123456",
+            address =
+                Address(
+                    zipCode = "12345",
+                    city = "Barcelona",
+                    street = "Avenida de la Constitucion",
+                    streetNumber = "12",
+                ),
+            contactDetails =
+                ContactDetails(
+                    firstName = "Jennifer",
+                    lastName = "Doe",
+                    email = "jane.doe@example.localhost",
+                    phone = "1234567890"))
+
+    private fun hitSearch(queryBuilder: MockHttpServletRequestBuilder): PagedResult<CustomerDto> {
+        val result = mockMvc.perform(queryBuilder).andExpect(status().isOk).andReturn()
+        return objectMapper.readValue(
+            result.response.contentAsString, object : TypeReference<PagedResult<CustomerDto>>() {})
     }
 }

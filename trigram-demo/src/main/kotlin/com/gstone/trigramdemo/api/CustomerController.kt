@@ -20,4 +20,11 @@ class CustomerController(private val customerSearchService: CustomerSearchServic
         @RequestParam("q") search: String,
         pageable: Pageable,
     ): PagedResult<CustomerDto> = customerSearchService.searchCustomers(search, pageable)
+
+    @GetMapping("/specification")
+    fun searchCustomersBySpecification(
+        @RequestParam("q") search: String,
+        pageable: Pageable,
+    ): PagedResult<CustomerDto> =
+        customerSearchService.searchCustomersBySpecification(search, pageable)
 }
