@@ -35,14 +35,14 @@ $$
                             WHEN random() < 0.5 THEN 'Calle de la Esperanza'
                             WHEN random() < 0.6 THEN 'Avenida de la Constitucion'
                             WHEN random() < 0.7 THEN 'Calle de la Libertad'
-                            WHEN random() < 0.8 THEN 'Calle del Río'
+                            WHEN random() < 0.8 THEN 'Calle del Rio'
                             WHEN random() < 0.9 THEN 'Avenida del Mar'
                             ELSE 'Calle de la Montana'
                             END,
                         (1 + random() * 999)::int::text,
                         CASE
                             WHEN random() < 0.1 THEN 'Juan'
-                            WHEN random() < 0.2 THEN 'María'
+                            WHEN random() < 0.2 THEN 'Maria'
                             WHEN random() < 0.3 THEN 'Jose'
                             WHEN random() < 0.4 THEN 'Ana'
                             WHEN random() < 0.5 THEN 'Luis'
@@ -53,12 +53,12 @@ $$
                             ELSE 'Carmen'
                             END,
                         CASE
-                            WHEN random() < 0.1 THEN 'García'
-                            WHEN random() < 0.2 THEN 'Martínez'
+                            WHEN random() < 0.1 THEN 'Garcia'
+                            WHEN random() < 0.2 THEN 'Martinez'
                             WHEN random() < 0.3 THEN 'Lopez'
                             WHEN random() < 0.4 THEN 'Perez'
                             WHEN random() < 0.5 THEN 'Sanchez'
-                            WHEN random() < 0.6 THEN 'Ramírez'
+                            WHEN random() < 0.6 THEN 'Ramirez'
                             WHEN random() < 0.7 THEN 'Torres'
                             WHEN random() < 0.8 THEN 'Hernandez'
                             WHEN random() < 0.9 THEN 'Gonzalez'
