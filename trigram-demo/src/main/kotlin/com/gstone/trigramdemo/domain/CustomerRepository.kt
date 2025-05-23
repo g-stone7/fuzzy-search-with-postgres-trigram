@@ -24,4 +24,20 @@ interface CustomerRepository :
                         OR trgm_word_similarity(:search, c.address.street)
                 """)
     fun findAll(@Param("search") search: String, pageable: Pageable): Page<CustomerEntity>
+
+    @Query(
+        """
+    SELECT *
+    FROM customer
+    WHERE
+        :search <% contact_first_name
+        OR :search <% contact_last_name
+        OR :search <% address_city
+        OR :search <% address_street
+    """,
+        nativeQuery = true)
+    fun findAllByNativeQuery(
+        @Param("search") search: String,
+        pageable: Pageable
+    ): Page<CustomerEntity>
 }

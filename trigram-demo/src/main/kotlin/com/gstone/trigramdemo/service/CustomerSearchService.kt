@@ -35,6 +35,11 @@ constructor(
         return result.asPagedResult(result.content.map { it.asCustomerDto() })
     }
 
+    fun searchCustomersByNativeQuery(search: Search, pageable: Pageable): PagedResult<CustomerDto> {
+        val result = customerRepository.findAllByNativeQuery(search, pageable)
+        return result.asPagedResult(result.content.map { it.asCustomerDto() })
+    }
+
     private fun Search.toSpecification(): Specification<CustomerEntity> {
         return Specification { root, _, criteriaBuilder ->
             val searchPredicates = mutableListOf<Predicate>()
