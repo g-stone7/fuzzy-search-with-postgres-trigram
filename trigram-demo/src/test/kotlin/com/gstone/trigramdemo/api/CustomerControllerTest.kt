@@ -57,7 +57,7 @@ constructor(
 
     @ParameterizedTest
     @ValueSource(strings = ["Barcelna", "avenida", "de la c", "constitucon", "Jenifer"])
-    fun `searchCustomersWithSpecification - should find customer when search query has typos`(
+    fun `searchCustomersBySpecification - should find customer when search query has typos`(
         search: String
     ) {
         val result = hitSearch(get("/customers/specification").queryParam("q", search))
@@ -66,10 +66,28 @@ constructor(
 
     @ParameterizedTest
     @ValueSource(strings = ["Madrid", "John"])
-    fun `searchCustomersWithSpecification - should not find customer when search query is not similar enough`(
+    fun `searchCustomersBySpecification - should not find customer when search query is not similar enough`(
         search: String
     ) {
         val result = hitSearch(get("/customers/specification").queryParam("q", search))
+        assertThat(result.totalElements).isEqualTo(0)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["Barcelna", "avenida", "de la c", "constitucon", "Jenifer"])
+    fun `searchCustomersByNativeQuery - should find customer when search query has typos`(
+        search: String
+    ) {
+        val result = hitSearch(get("/customers/native").queryParam("q", search))
+        assertThat(result.totalElements).isEqualTo(1)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["Madrid", "John"])
+    fun `searchCustomersByNativeQuery - should not find customer when search query is not similar enough`(
+        search: String
+    ) {
+        val result = hitSearch(get("/customers/native").queryParam("q", search))
         assertThat(result.totalElements).isEqualTo(0)
     }
 
